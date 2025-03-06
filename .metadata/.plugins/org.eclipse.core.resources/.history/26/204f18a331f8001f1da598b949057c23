@@ -1,0 +1,6 @@
+package com.example.demo.entities;
+
+@Entiti
+public class Assessment_question {
+
+}

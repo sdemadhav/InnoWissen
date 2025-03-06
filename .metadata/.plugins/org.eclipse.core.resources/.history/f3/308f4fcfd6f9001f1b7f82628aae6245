@@ -1,0 +1,17 @@
+package com.example.demo.dto;
+
+import lombok.Data;
+
+@Data
+public class QuestionDTO {
+    private String type;
+    private String title;
+    private String problemStatement;
+    private String difficultyLevel;
+    private int maxScore;
+    private int negativeScore;
+    private int timeBoundSeconds;
+    private boolean isActive;
+    private boolean isDraft;
+    private boolean aiEvaluationEnabled;
+}

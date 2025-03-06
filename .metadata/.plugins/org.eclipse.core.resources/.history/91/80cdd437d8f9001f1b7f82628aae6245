@@ -1,0 +1,81 @@
+package com.example.demo.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.dto.PublishAssessmentDTO;
+import com.example.demo.entities.Assessment;
+import com.example.demo.entities.AssessmentQuestion;
+import com.example.demo.entities.AssessmentSection;
+import com.example.demo.entities.Question;
+import com.example.demo.repository.AssessmentRepo;
+import com.example.demo.repository.AssessmentSectionRepo;
+import com.example.demo.repository.SectionRepo;
+import com.example.demo.repository.QuestionRepo;
+
+import java.util.Optional;
+import java.util.UUID;
+
+@Service
+public class AssessmentPublishService {
+
+    @Autowired
+    private AssessmentRepo assessmentRepo;
+
+    @Autowired
+    private AssessmentSectionRepo sectionRepo;
+
+    @Autowired
+    private QuestionsRepo questionRepo;
+
+    public ResponseEntity<String> publishAssessment(Long id, PublishAssessmentDTO publishAssessmentDTO) {
+        // 1️⃣ Fetching existing assessment entity from DB using repo
+        Optional<Assessment> assessmentOptional = assessmentRepo.findById(id);
+        if (assessmentOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Assessment assessment = assessmentOptional.get(); // Entity object
+
+        // 2️⃣ Iterating through sections from DTO (PublishAssessmentDTO)
+        for (AssessmentSection sectionDTO : publishAssessmentDTO.getSections()) {
+            // Creating a new AssessmentSection entity based on DTO data
+            AssessmentSection section = new AssessmentSection();
+            section.setSectionType(sectionDTO.getSectionType());
+            section.setNumRequiredQuestions(sectionDTO.getNumRequiredQuestions());
+            section.setAssessment(assessment); // Linking to existing assessment
+            section.setCreatedDatetime(sectionDTO.getCreatedDatetime());
+            section.setUpdatedDatetime(sectionDTO.getUpdatedDatetime());
+
+            // Saving section entity to DB via repo
+            AssessmentSection savedSection = sectionRepo.save(section);
+
+            // 3️⃣ Iterating through questions from DTO (inside each section)
+            for (AssessmentQuestion questionDTO : sectionDTO.getQuestions()) {
+                // Creating a new AssessmentQuestion entity
+                AssessmentQuestion question = new AssessmentQuestion();
+                question.setAssessment(assessment); // Linking to assessment
+                question.setSection(savedSection); // Linking to section
+
+                // Fetching existing Question entity from DB using repo
+                Optional<Question> questionEntityOptional = questionRepo.findById(questionDTO.getQuestion().getId());
+                if (questionEntityOptional.isEmpty()) {
+                    return ResponseEntity.badRequest().body("Invalid Question ID: " + questionDTO.getQuestion().getId());
+                }
+
+                Question questionEntity = questionEntityOptional.get(); // Entity object
+                question.setQuestion(questionEntity);
+
+                question.setUsageCount(questionDTO.getUsageCount());
+                question.setSequenceNo(questionDTO.getSequenceNo());
+                question.setIsRequired(questionDTO.getIsRequired());
+
+                // Saving question entity to DB via repo
+                questionRepo.save(question);
+            }
+        }
+
+        return ResponseEntity.ok("Assessment published successfully with sections and questions.");
+    }
+}

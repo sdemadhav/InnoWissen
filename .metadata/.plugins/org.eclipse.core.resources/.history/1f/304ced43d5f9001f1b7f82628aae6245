@@ -1,0 +1,31 @@
+package com.example.demo.dto;
+
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Data
+@Getter
+@Setter
+public class PublishAssessmentDTO {
+    private String testName;
+    private String assessmentType;
+    private String status;         
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private Integer durationMinutes;
+    private String instructions;
+    private String listedTestConfig; 
+    private String proctoring_json;  
+    private String jobRoleDetails;
+    private Integer experienceMin;
+    private Integer experienceMax;
+    private Integer cutoffScore;
+    private String recommendedSkills;
+    
+    private List<SectionDTO> sections;
+    private List<QuestionDTO> standaloneQuestions;
+}

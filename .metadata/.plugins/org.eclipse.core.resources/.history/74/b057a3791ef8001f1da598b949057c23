@@ -1,0 +1,160 @@
+package com.example.demo.entities;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "questions")
+public class Question {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private int id;
+
+    @Column(name = "type", nullable = false, length = 50)
+    private String type;
+
+    @Column(name = "title", nullable = false, length = 500)
+    private String title;
+
+    @Column(name = "problem_statement", nullable = false,columnDefinition = "TEXT")
+    private String problemStatement;
+
+    @Column(name = "difficulty_level", nullable = false, length = 50)
+    private String difficultyLevel;
+
+    @Column(name = "max_score", nullable = false, columnDefinition = "INTEGER DEFAULT 100")
+    private int maxScore;
+
+    @Column(name = "negative_score", columnDefinition = "INTEGER DEFAULT 0")
+    private int negativeScore;
+
+    @Column(name = "time_bound_seconds", columnDefinition = "INTEGER DEFAULT 0")
+    private int timeBoundSeconds;
+
+    @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean isActive;
+
+    @Column(name = "is_draft", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean isDraft;
+
+    @Column(name = "ai_evaluation_enabled", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean aiEvaluationEnabled;
+
+    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
+    private LocalDateTime updatedAt;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getProblemStatement() {
+		return problemStatement;
+	}
+
+	public void setProblemStatement(String problemStatement) {
+		this.problemStatement = problemStatement;
+	}
+
+	public String getDifficultyLevel() {
+		return difficultyLevel;
+	}
+
+	public void setDifficultyLevel(String difficultyLevel) {
+		this.difficultyLevel = difficultyLevel;
+	}
+
+	public int getMaxScore() {
+		return maxScore;
+	}
+
+	public void setMaxScore(int maxScore) {
+		this.maxScore = maxScore;
+	}
+
+	public int getNegativeScore() {
+		return negativeScore;
+	}
+
+	public void setNegativeScore(int negativeScore) {
+		this.negativeScore = negativeScore;
+	}
+
+	public int getTimeBoundSeconds() {
+		return timeBoundSeconds;
+	}
+
+	public void setTimeBoundSeconds(int timeBoundSeconds) {
+		this.timeBoundSeconds = timeBoundSeconds;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public boolean isDraft() {
+		return isDraft;
+	}
+
+	public void setDraft(boolean isDraft) {
+		this.isDraft = isDraft;
+	}
+
+	public boolean isAiEvaluationEnabled() {
+		return aiEvaluationEnabled;
+	}
+
+	public void setAiEvaluationEnabled(boolean aiEvaluationEnabled) {
+		this.aiEvaluationEnabled = aiEvaluationEnabled;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+    
+}
+
+
+
+// job role (String), Namew of test, recommended skills (array of string), duration : integer, experience level(string), Question array 

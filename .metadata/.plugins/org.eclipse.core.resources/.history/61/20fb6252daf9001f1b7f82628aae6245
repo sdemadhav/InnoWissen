@@ -1,0 +1,68 @@
+package com.example.demo.service;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.dto.PublishAssessmentDTO;
+import com.example.demo.entities.Assessment;
+import com.example.demo.entities.AssessmentQuestion;
+import com.example.demo.entities.AssessmentSection;
+import com.example.demo.entities.Question;
+import com.example.demo.repository.AssessmentQuestionRepo;
+import com.example.demo.repository.AssessmentRepo;
+import com.example.demo.repository.AssessmentSectionRepo;
+import com.example.demo.repository.QuestionsRepo;
+
+@Service
+public class AssessmentPublishService {
+
+    @Autowired
+    private AssessmentRepo assessmentRepo;
+
+    @Autowired
+    private AssessmentSectionRepo sectionRepo;
+
+    @Autowired
+    private QuestionsRepo questionRepo;
+    
+    @Autowired
+    private AssessmentQuestionRepo assessmentQuestionRepo;
+
+    public ResponseEntity<String> publishAssessment(Long id, PublishAssessmentDTO publishAssessmentDTO) {
+        // Fetch existing assessment
+        Optional<Assessment> assessmentOptional = assessmentRepo.findById(id);
+        if (assessmentOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Assessment assessment = assessmentOptional.get();
+
+        for (SectionDTO sectionDTO : publishAssessmentDTO.getSections()) {
+            AssessmentSection section = new AssessmentSection(); 
+
+            section.setSectionType(sectionDTO.getSectionType()); 
+            section.setNumRequiredQuestions(sectionDTO.getNumRequiredQuestions());
+            section.setAssessment(assessment); 
+
+            AssessmentSection savedSection = sectionRepo.save(section);
+
+            for (QuestionDTO questionDTO : sectionDTO.getQuestions()) {
+                Question existingQuestion = questionRepo.findById(questionDTO.getId()).orElseThrow(
+                    () -> new RuntimeException("Question not found")
+                );
+
+                AssessmentQuestion assessmentQuestion = new AssessmentQuestion();
+                assessmentQuestion.setAssessment(assessment);
+                assessmentQuestion.setSection(savedSection);
+                assessmentQuestion.setQuestion(existingQuestion);
+                assessmentQuestionRepo.save(assessmentQuestion);
+            }
+        }
+
+        return ResponseEntity.ok("Assessment published successfully with sections and questions.");
+    }
+
+}

@@ -1,0 +1,36 @@
+package com.example.demo.service;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+
+import org.postgresql.util.PGobject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.entities.Assessment;
+import com.example.demo.repository.AssessmentRepo;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Service
+public class AssessmentService {
+	
+	@Autowired
+	AssessmentRepo ar;
+
+	public List<Assessment> getAllAssessments() {
+		return ar.findAll();
+	}
+
+	public void addAssessment(Assessment asmt)
+	{
+		ar.save(asmt);
+	}
+	
+	public Optional<Assessment> getAssessmentById(int id) {
+		return ar.findById(id);
+	}
+
+
+}

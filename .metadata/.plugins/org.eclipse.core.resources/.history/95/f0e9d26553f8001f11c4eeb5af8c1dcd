@@ -1,0 +1,233 @@
+package com.example.demo.entities;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+
+import com.example.demo.util.JsonConverter;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "assessment")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Assessment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name="testName",length = 200)
+    private String testName;
+
+    @Column(name = "assessment_type", nullable = false, length = 50)
+    private String assessmentType = "INVITEONLY"; 
+
+    @Column(nullable = false, length = 50)
+    private String status = "DRAFT";
+
+    @Column(name = "start_time")
+    private LocalDateTime startTime;
+
+    @Column(name = "end_time")
+    private LocalDateTime endTime;
+
+    @Column(name = "duration_minutes")
+    private Integer durationMinutes = 0;
+
+    @Column(columnDefinition = "TEXT")
+    private String instructions;
+
+//    @Convert(converter = JsonConverter.class)
+////    @Column(name = "listed_test_config")
+//    private Map<String, Object> listedTestConfig;
+    
+    @Lob
+    @Column(columnDefinition = "json")
+    private String listedTestConfig;
+
+    @Column(name = "job_role_details", columnDefinition = "TEXT")
+    private String jobRoleDetails;
+
+    @Column(name = "experience_min")
+    private Integer experienceMin = 0;
+
+    @Column(name = "experience_max")
+    private Integer experienceMax = 0;
+
+    @Column(name = "cutoff_score")
+    private Integer cutoffScore = 0;
+    
+//    @Lob
+//    @Column(columnDefinition = "json")
+    private String proctoringJson;
+    
+
+	public String getTestName() {
+		return testName;
+	}
+
+	public void setTestName(String testName) {
+		this.testName = testName;
+	}
+
+	public String getAssessmentType() {
+		return assessmentType;
+	}
+
+	public void setAssessmentType(String assessmentType) {
+		this.assessmentType = assessmentType;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public LocalDateTime getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(LocalDateTime startTime) {
+		this.startTime = startTime;
+	}
+
+	public LocalDateTime getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(LocalDateTime endTime) {
+		this.endTime = endTime;
+	}
+
+	public Integer getDurationMinutes() {
+		return durationMinutes;
+	}
+
+	public void setDurationMinutes(Integer durationMinutes) {
+		this.durationMinutes = durationMinutes;
+	}
+
+	public String getInstructions() {
+		return instructions;
+	}
+
+	public void setInstructions(String instructions) {
+		this.instructions = instructions;
+	}
+
+	public String getListedTestConfig() {
+		return listedTestConfig;
+	}
+
+	public void setListedTestConfig(String listedTestConfig) {
+		this.listedTestConfig = listedTestConfig;
+	}
+
+	public String getJobRoleDetails() {
+		return jobRoleDetails;
+	}
+
+	public void setJobRoleDetails(String jobRoleDetails) {
+		this.jobRoleDetails = jobRoleDetails;
+	}
+
+	public Integer getExperienceMin() {
+		return experienceMin;
+	}
+
+	public void setExperienceMin(Integer experienceMin) {
+		this.experienceMin = experienceMin;
+	}
+
+	public Integer getExperienceMax() {
+		return experienceMax;
+	}
+
+	public void setExperienceMax(Integer experienceMax) {
+		this.experienceMax = experienceMax;
+	}
+
+	public Integer getCutoffScore() {
+		return cutoffScore;
+	}
+
+	public void setCutoffScore(Integer cutoffScore) {
+		this.cutoffScore = cutoffScore;
+	}
+
+	public String getProctoringJson() {
+		return proctoringJson;
+	}
+
+	public void setProctoringJson(String proctoringJson) {
+		this.proctoringJson = proctoringJson;
+	}
+
+	public String getRecommendedSkills() {
+		return recommendedSkills;
+	}
+
+	public void setRecommendedSkills(String recommendedSkills) {
+		this.recommendedSkills = recommendedSkills;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	@Column(name = "recommended_skills", columnDefinition = "TEXT")
+    private String recommendedSkills;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    
+}

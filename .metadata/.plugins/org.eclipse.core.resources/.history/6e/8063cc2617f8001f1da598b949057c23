@@ -1,0 +1,38 @@
+package com.example.demo.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import com.example.demo.entities.Question;
+import com.example.demo.repository.QuestionsRepo;
+
+@Service
+public class QuestionsService {
+
+	@Autowired
+	QuestionsRepo qr;
+
+	public List<Question> getAllQuestions() {
+		return qr.findAll();
+	}
+
+
+	public Question addQuestion(Question question) {
+		qr.save(question);
+	}
+
+
+	public Optional<Question> getQuestionById(int id) {
+		if(qr.findById(id) == null) {
+			return "Question Does Not Exist";
+		}
+		return qr.findById(id);
+	}
+	
+	
+}

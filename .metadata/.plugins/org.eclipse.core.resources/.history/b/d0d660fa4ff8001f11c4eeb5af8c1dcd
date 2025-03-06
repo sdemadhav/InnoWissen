@@ -1,0 +1,55 @@
+package com.example.demo.controllers;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.entities.Assessment;
+import com.example.demo.entities.Question;
+import com.example.demo.service.AssessmentService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
+
+
+@RestController
+@RequestMapping("/assessments")
+public class AssessmentController {
+	
+	@Autowired
+	AssessmentService as;
+	
+	@GetMapping("/")
+	public List<Assessment> getAllAssessments(){
+		return as.getAllAssessments();
+	}
+	
+	@PostMapping("/add")
+    public ResponseEntity<String> createTest(@RequestBody Assessment asmt) {
+	
+		
+		Assessment asst = new Assessment();
+		asst.setProctoringJson(asmt.getProctoringJson());
+		asst.setListedTestConfig(asmt.getListedTestConfig());
+        Assessment savedAssessment = as.addAssessment(asst);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body("Test created successfully !"+savedAssessment.getStatus());
+    }
+	
+	
+	@GetMapping("/{id}")
+    public ResponseEntity<Assessment> getAssessmentById(@PathVariable("id") int id) { 
+        return as.getAssessmentById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+	
+
+}

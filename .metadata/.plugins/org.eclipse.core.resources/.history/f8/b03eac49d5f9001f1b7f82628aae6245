@@ -1,0 +1,127 @@
+package com.example.demo.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.demo.dto.PublishAssessmentDTO;
+import com.example.demo.dto.QuestionDTO;
+import com.example.demo.dto.SectionDTO;
+import com.example.demo.entities.Assessment;
+import com.example.demo.entities.AssessmentQuestion;
+import com.example.demo.entities.AssessmentSection;
+import com.example.demo.entities.Question;
+import com.example.demo.repository.AssessmentQuestionRepo;
+import com.example.demo.repository.AssessmentRepo;
+import com.example.demo.repository.AssessmentSectionRepo;
+import com.example.demo.repository.QuestionsRepo;
+
+@Service
+public class AssessmentPublishService {
+
+    @Autowired
+    private AssessmentRepo assessmentRepo;
+
+    @Autowired
+    private AssessmentSectionRepo sectionRepo;
+
+    @Autowired
+    private QuestionsRepo questionRepo;
+
+    @Autowired
+    private AssessmentQuestionRepo assessmentQuestionRepo;
+
+    @Transactional
+    public Assessment publishAssessment(PublishAssessmentDTO dto) {
+        // 1. Create and save the Assessment
+        Assessment assessment = new Assessment();
+        assessment.setTestName(dto.getTestName());
+        assessment.setAssessmentType(dto.getAssessmentType());
+        assessment.setStatus(dto.getStatus());
+        assessment.setStartTime(dto.getStartTime());
+        assessment.setEndTime(dto.getEndTime());
+        assessment.setDurationMinutes(dto.getDurationMinutes());
+        assessment.setInstructions(dto.getInstructions());
+        assessment.setListedTestConfig(dto.getListedTestConfig());
+        assessment.setProctoring_json(dto.getProctoring_json());
+        assessment.setJobRoleDetails(dto.getJobRoleDetails());
+        assessment.setExperienceMin(dto.getExperienceMin());
+        assessment.setExperienceMax(dto.getExperienceax());
+        assessment.setCutoffScore(dto.getCutoffScore());
+        assessment.setRecommendedSkills(dto.getRecommendedSkills());
+        // (Assuming createdAt and updatedAt are auto-set via @PrePersist)
+
+        Assessment savedAssessment = assessmentRepo.save(assessment);
+
+        int globalSequence = 1;
+
+        // 2. Process sections if provided
+        if (dto.getSections() != null) {
+            for (SectionDTO sectionDTO : dto.getSections()) {
+                AssessmentSection section = new AssessmentSection();
+                section.setAssessment(savedAssessment);
+                section.setSectionType(sectionDTO.getSectionType());
+                section.setNumRequiredQuestions(sectionDTO.getNumRequiredQuestions());
+                AssessmentSection savedSection = sectionRepo.save(section);
+
+                if (sectionDTO.getQuestions() != null) {
+                    for (QuestionDTO qdto : sectionDTO.getQuestions()) {
+                        // Create question
+                        Question question = new Question();
+                        question.setType(qdto.getType());
+                        question.setTitle(qdto.getTitle());
+                        question.setProblemStatement(qdto.getProblemStatement());
+                        question.setDifficultyLevel(qdto.getDifficultyLevel());
+                        question.setMaxScore(qdto.getMaxScore());
+                        question.setNegativeScore(qdto.getNegativeScore());
+                        question.setTimeBoundSeconds(qdto.getTimeBoundSeconds());
+                        question.setActive(qdto.isActive());
+                        question.setDraft(qdto.isDraft());
+                        question.setAiEvaluationEnabled(qdto.isAiEvaluationEnabled());
+                        Question savedQuestion = questionRepo.save(question);
+
+                        // Create mapping to maintain sequence
+                        AssessmentQuestion aq = new AssessmentQuestion();
+                        aq.setAssessment(savedAssessment);
+                        aq.setSection(savedSection);
+                        aq.setQuestion(savedQuestion);
+                        aq.setSequenceNo(globalSequence++);
+                        aq.setIsRequired(true);  // or set based on your business logic
+                        assessmentQuestionRepo.save(aq);
+                    }
+                }
+            }
+        }
+
+        // 3. Process standalone questions if provided
+        if (dto.getStandaloneQuestions() != null) {
+            for (QuestionDTO qdto : dto.getStandaloneQuestions()) {
+                Question question = new Question();
+                question.setType(qdto.getType());
+                question.setTitle(qdto.getTitle());
+                question.setProblemStatement(qdto.getProblemStatement());
+                question.setDifficultyLevel(qdto.getDifficultyLevel());
+                question.setMaxScore(qdto.getMaxScore());
+                question.setNegativeScore(qdto.getNegativeScore());
+                question.setTimeBoundSeconds(qdto.getTimeBoundSeconds());
+                question.setActive(qdto.isActive());
+                question.setDraft(qdto.isDraft());
+                question.setAiEvaluationEnabled(qdto.isAiEvaluationEnabled());
+                Question savedQuestion = questionRepo.save(question);
+
+                AssessmentQuestion aq = new AssessmentQuestion();
+                aq.setAssessment(savedAssessment);
+                aq.setQuestion(savedQuestion);
+                aq.setSequenceNo(globalSequence++);
+                aq.setIsRequired(true);
+                assessmentQuestionRepo.save(aq);
+            }
+        }
+
+        // 4. Mark assessment as published, if you have such a flag (optional)
+        savedAssessment.setStatus("PUBLISHED");
+        return assessmentRepo.save(savedAssessment);
+    }
+
+    // Existing methods: getAllAssessments, getAssessmentById, addAssessment, etc.
+}

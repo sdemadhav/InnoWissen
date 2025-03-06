@@ -1,0 +1,32 @@
+package com.example.demo.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.entities.Question;
+import com.example.demo.repository.QuestionsRepo;
+
+@Service
+public class QuestionsService {
+
+    @Autowired
+    private QuestionsRepo qr;
+
+
+    public List<Question> getAllQuestions() {
+        return qr.findAll();
+    }
+
+
+    public Question addQuestion(Question question) {
+        return qr.save(question);
+    }
+
+    public Optional<Question> getQuestionById(int qid) {
+        return qr.findById(qid);
+    }
+
+}

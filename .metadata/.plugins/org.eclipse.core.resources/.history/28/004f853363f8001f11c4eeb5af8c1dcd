@@ -1,0 +1,39 @@
+package com.example.demo.controllers;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.demo.entities.Assessment;
+import com.example.demo.service.AssessmentService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+@RestController
+@RequestMapping("/assessments")
+public class AssessmentController {
+
+    @Autowired
+    private AssessmentService as;
+
+    @GetMapping("/")
+    public List<Assessment> getAllAssessments() {
+        return as.getAllAssessments();
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<Assessment> createAssessment(@RequestBody Assessment assessment) throws JsonProcessingException, SQLException {
+        Assessment savedAssessment = as.addAssessment(assessment);
+        return ResponseEntity.ok(savedAssessment);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Assessment> getAssessmentById(@PathVariable("id") int id) {
+        Optional<Assessment> assessment = as.getAssessmentById(id);
+        return assessment.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+}

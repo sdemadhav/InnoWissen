@@ -1,0 +1,28 @@
+package com.example.demo.util;
+
+import java.sql.SQLException;
+
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
+
+import org.postgresql.util.PGobject;
+
+@Converter
+public class JsonAttributeConverter implements AttributeConverter<String, PGobject> {
+
+    public PGobject convertToDatabaseColumn(String attribute) {
+        PGobject jsonObject = new PGobject();
+        jsonObject.setType("json");
+        try {
+            jsonObject.setValue(attribute);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to convert String to PGobject", e);
+        }
+        return jsonObject;
+    }
+
+    @Override
+    public String convertToEntityAttribute(PGobject dbData) {
+        return dbData.getValue();
+    }
+}

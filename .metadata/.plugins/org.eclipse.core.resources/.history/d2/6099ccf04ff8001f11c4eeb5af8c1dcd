@@ -1,0 +1,37 @@
+package com.example.demo.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.entities.Assessment;
+import com.example.demo.repository.AssessmentRepo;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Service
+public class AssessmentService {
+	
+	@Autowired
+	AssessmentRepo ar;
+
+	public List<Assessment> getAllAssessments() {
+		return ar.findAll();
+	}
+
+	public Assessment addAssessment(Assessment asmt) throws JsonProcessingException {
+		ObjectMapper map = new ObjectMapper();
+		asmt.setProctoringJson(map.writeValueAsString(asmt.getProctoringJson()));
+		asmt.setListedTestConfig(asmt.getListedTestConfig());
+		
+        return ar.save(asmt); 
+    }
+
+	public Optional<Assessment> getAssessmentById(int id) {
+		return ar.findById(id);
+	}
+
+
+}

@@ -1,0 +1,43 @@
+package com.example.demo.entities;
+
+import java.time.LocalDateTime;
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "assessment_question")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class AssessmentQuestion {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "assessment_id", nullable = false)
+    private Assessment assessment;  // Foreign Key to Assessment
+
+    @ManyToOne
+    @JoinColumn(name = "section_id")
+    private AssessmentSection section;  // Foreign Key to AssessmentSection
+
+    @ManyToOne
+    @JoinColumn(name = "question_id", nullable = false)
+    private Question question;  // Foreign Key to Question
+
+    @Column(name = "usage_count")
+    private Long usageCount; // Tracks how many times this question has been used
+
+    @Column(name = "sequence_no", nullable = false, columnDefinition = "INTEGER DEFAULT 1")
+    private Integer sequenceNo = 1; // Order of the question in the test
+
+    @Column(name = "is_required", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private Boolean isRequired = true; // Whether question is mandatory
+
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT NOW()")
+    private LocalDateTime createdAt = LocalDateTime.now();
+}

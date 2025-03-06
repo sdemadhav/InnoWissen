@@ -1,0 +1,27 @@
+package com.example.demo.dto;
+
+import lombok.Data;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Data
+public class PublishAssessmentDTO {
+    private String testName;
+    private String assessmentType; // e.g., "INVITEONLY" or "PUBLIC"
+    private String status;         // e.g., "DRAFT", "ACTIVE"
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private Integer durationMinutes;
+    private String instructions;
+    private String listedTestConfig;  // Stringified JSON, if using String in entity
+    private String proctoring_json;   // Stringified JSON
+    private String jobRoleDetails;
+    private Integer experienceMin;
+    private Integer experienceMax;
+    private Integer cutoffScore;
+    private String recommendedSkills;
+    
+    // Optional: sections and standalone questions (if any)
+    private List<SectionDTO> sections;
+    private List<QuestionDTO> standaloneQuestions;
+}

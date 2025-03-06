@@ -1,0 +1,19 @@
+import java.util.List;
+
+import lombok.Data;
+
+@Data
+public class PublishAssessmentDTO {
+    private String title;
+    private String description;
+
+    private List<SectionDTO> sections;
+    private List<QuestionDTO> standaloneQuestions;
+}
+
+
+@Data
+public class QuestionDTO {
+    private String text;
+    private String type;
+}

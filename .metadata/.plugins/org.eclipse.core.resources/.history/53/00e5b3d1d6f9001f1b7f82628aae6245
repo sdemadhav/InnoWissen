@@ -1,0 +1,55 @@
+package com.example.demo.service;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.dto.PublishAssessmentDTO;
+import com.example.demo.entities.Assessment;
+import com.example.demo.entities.Question;
+import com.example.demo.repository.AssessmentRepo;
+import com.example.demo.repository.AssessmentSectionRepo;
+import com.example.demo.repository.QuestionsRepo;
+
+@Service
+public class AssessmentPublishService {
+
+    @Autowired
+    private AssessmentRepo assessmentRepo;
+
+    @Autowired
+    private AssessmentSectionRepo sectionRepo;
+
+    @Autowired
+    private QuestionsRepo questionRepo;
+
+    public ResponseEntity<String> publishAssessment(Long id, PublishAssessmentDTO publishAssessmentDTO) {
+        // Fetch existing assessment
+        Optional<Assessment> assessmentOptional = assessmentRepo.findById(id);
+        if (assessmentOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Assessment assessment = assessmentOptional.get();
+
+        // Process sections
+        for (Section sectionDTO : publishAssessmentDTO.getSections()) {
+            Section section = new Section();
+            section.setTitle(sectionDTO.getTitle());
+            section.setAssessment(assessment);  // Link to existing assessment
+            Section savedSection = sectionRepo.save(section);
+
+            // Process questions
+            for (Question questionDTO : sectionDTO.getQuestions()) {
+                Question question = new Question();
+                question.setText(questionDTO.getText());
+                question.setSection(savedSection); // Link to section
+                questionRepo.save(question);
+            }
+        }
+
+        return ResponseEntity.ok("Assessment published successfully with sections and questions.");
+    }
+}

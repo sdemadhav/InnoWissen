@@ -1,0 +1,22 @@
+package com.example.demo.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.demo.dto.PublishAssessmentDTO;
+import com.example.demo.service.AssessmentPublishService;
+
+@RestController
+@RequestMapping("/assessments")
+@CrossOrigin("*")
+public class AssessmentPublishController {
+
+    @Autowired
+    private AssessmentPublishService assessmentPublishService;
+
+    @PostMapping("/publish/{id}")
+    public ResponseEntity<String> publishAssessment(@PathVariable Long id, @RequestBody PublishAssessmentDTO publishAssessmentDTO) {
+        return assessmentPublishService.publishAssessment(id, publishAssessmentDTO);
+    }
+}

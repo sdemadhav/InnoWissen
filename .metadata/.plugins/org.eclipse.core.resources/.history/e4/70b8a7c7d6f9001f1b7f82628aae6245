@@ -1,0 +1,11 @@
+package com.example.demo.dto;
+
+import lombok.Data;
+import java.util.List;
+
+@Data
+public class SectionDTO {
+    private String sectionType;
+    private Integer numRequiredQuestions;
+    private List<QuestionDTO> questions; // Questions for this section
+}

@@ -1,0 +1,39 @@
+package com.example.demo.controllers;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.entities.Question;
+import com.example.demo.service.QuestionsService;
+
+@RestController
+public class QuestionsController {
+	
+	@Autowired
+	QuestionsService qs ;
+	
+	@GetMapping("/getAllQuestions")
+	public List<Question> getQuestions()
+	{
+		return qs.getAllQuestions();
+		
+	}
+	
+	@PostMapping("/addQuestion")
+    public Question addQuestion(@RequestBody Question question) {
+        return qs.addQuestion(question);
+    }
+	
+	@GetMapping("/getQuestions/{id}")
+    public Optional<Question> getQuestionById(@PathVariable int id) {
+        return qs.getQuestionById(id);
+    }
+
+}
